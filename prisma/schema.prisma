@@ -8,13 +8,11 @@ generator client {
     previewFeatures = ["fullTextSearch"]
 }
 
-
-
 model Users {
     id        Int      @id @default(autoincrement())
     firstname String
     lastname  String
-    mail      String   @unique
+    email     String
     password  String
     role      Role
     classId   Int?
@@ -25,10 +23,9 @@ model Users {
 }
 
 model Class {
-    id    Int     @id @default(autoincrement())
-    grade Grade
-    role  Role
-    Users Users[]
+    id     Int     @id @default(autoincrement())
+    grade  Grade
+    people Users[]
 }
 
 enum Role {

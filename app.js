@@ -15,14 +15,15 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
-  const { mail, password } = req.body;
+  const { email, password } = req.body;
 
   const userData = await prisma.users.findFirst({
     where: {
-      mail: mail,
+      email: email,
       password: sha256(password),
     },
   });
+
   if (userData) {
     switch (userData.role === Role.ADMIN) {
       case true:
@@ -37,67 +38,47 @@ app.post("/api/login", async (req, res) => {
   } else {
     res.redirect("/");
   }
+
+  console.log(userData.firstname + " " + "has been created");
 });
-/* 
-app.use(async (req, res, next) => {
-  const path = req.path;
-  const token = req.cookies.token;
 
-  if (!token) return res.redirect("/");
-  const user = await prisma.users.findFirst({
-    where: {
-      token: token,
-    },
-  });
-  if (!user) return res.redirect("/");
+app.post("/user/create", async (req, res) => {
+  const { firstname, lastname, email, password, role } = req.body;
 
-  if (adminPaths.includes(path) && !Role.ADMIN) {
-    return res.redirect("/welcome");
-  }
+  const newUser = await prisma.users.create({
+      data: {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          password: sha256(password),
+          role: role
+      }
+  })
 
-  next(); // if user is found, continue
-});
- */
-function createUser() {
-  const user = prisma.users.create({
-    data: {
-      firstname: "test",
-      lastname: "testing",
-      mail: "test@test.com",
-      password: sha256("Passord01"),
-      role: Role.STUDENT,
-    },
-  });
-
-  console.log(user.firstname + "" + "has been created");
-}
+  res.redirect("/admin")
+})
 
 // function to create a student
+
+function sha256(message) {
+  return crypto.createHash("sha256").update(message).digest("hex").toString();
+}
 
 async function createAdmin() {
   const admin = await prisma.users.create({
     data: {
       firstname: "admin",
       lastname: "admin",
-      mail: "admin@test.com",
+      email: "admin@test.com",
       password: sha256("Passord01"),
       role: Role.ADMIN,
     },
   });
 
   console.log(`${admin.firstname} has been created`);
-
-  return admin;
 }
 
-const apiRoutes = {
-  login: (req, res) => {
-    res.sendFile(__dirname + "/public/login.html");
-  },
-  register: (req, res) => {
-    res.sendFile(__dirname + "../public/admin/register.html");
-  },
-};
+// liste for å hente sider, bruk app.get slik som nedenfor for å hente sider
 const pageroutes = {
   admin: (req, res) => {
     res.sendFile(__dirname + "/public/admin.html");
@@ -105,16 +86,31 @@ const pageroutes = {
   welcome: (req, res) => {
     res.sendFile(__dirname + "/public/welcome.html");
   },
+  create: (req, res) => {
+    res.sendFile(__dirname + "/public/admin/create.html");
+  },
 };
 
- 
-app.post("/api/registerUser", apiRoutes.register);
+// liste (objekt) for å kjøre funksjoner, bruk apiPostRoutes slik som nedenfor for å kjøre funksjoner (post)
+const apiPostRoutes = {
+  addClass: async (req, res) => {
+    const { grade } = req.body;
 
+    const newClass = await prisma.class.create({
+      data: {
+        grade: grade,
+      },
+    });
+
+    res.redirect("/admin");
+  }
+};
+ 
+// henter sider med get
+app.get("/admin/create", pageroutes.create);
+
+app.post("/api/addClass", apiPostRoutes.addClass);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-
-async function sha256(message) {
-  return crypto.createHash("sha256").update(message).digest("hex");
-}
