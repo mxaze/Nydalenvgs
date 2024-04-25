@@ -8,6 +8,8 @@ generator client {
     previewFeatures = ["fullTextSearch"]
 }
 
+
+
 model Users {
     id        Int      @id @default(autoincrement())
     firstname String
