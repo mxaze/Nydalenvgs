@@ -9,20 +9,24 @@ generator client {
 }
 
 model Users {
-    id        Int    @id @default(autoincrement())
+    id        Int      @id @default(autoincrement())
     firstname String
     lastname  String
-    mail      String @unique
+    mail      String   @unique
     password  String
     role      Role
+    classId   Int?
+    class     Class?   @relation(fields: [classId], references: [id])
+    createdAt DateTime @default(now())
 
     token String @unique @default(cuid())
 }
 
 model Class {
-    id    Int   @id @default(autoincrement())
+    id    Int     @id @default(autoincrement())
     grade Grade
     role  Role
+    Users Users[]
 }
 
 enum Role {
