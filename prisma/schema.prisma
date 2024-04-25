@@ -1,0 +1,38 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch"]
+}
+
+model Users {
+    id        Int    @id @default(autoincrement())
+    firstname String
+    lastname  String
+    mail      String @unique
+    password  String
+    role      Role
+
+    token String @unique @default(cuid())
+}
+
+model Class {
+    id    Int   @id @default(autoincrement())
+    grade Grade
+    role  Role
+}
+
+enum Role {
+    STUDENT
+    TEACHER
+    ADMIN
+}
+
+enum Grade {
+    VG1
+    VG2
+    VG3
+}
