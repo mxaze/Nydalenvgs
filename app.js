@@ -59,7 +59,6 @@ app.post("/user/create", async (req, res) => {
 })
 
 // function to create a student
-
 function sha256(message) {
   return crypto.createHash("sha256").update(message).digest("hex").toString();
 }
