@@ -88,6 +88,12 @@ const pageroutes = {
   create: (req, res) => {
     res.sendFile(__dirname + "/public/admin/create.html");
   },
+  edit: (req, res) => {
+    res.sendFile(__dirname + "/public/admin/edit.html");
+  },
+  editByID: (req, res) => {
+    res.sendFile(__dirname + "/public/admin/id.html");
+  }
 };
 
 // liste (objekt) for å kjøre funksjoner, bruk apiPostRoutes slik som nedenfor for å kjøre funksjoner (post)
@@ -102,13 +108,63 @@ const apiPostRoutes = {
     });
 
     res.redirect("/admin");
+  },
+  getUsers: async (req, res) => {
+    const users = await prisma.users.findMany();
+
+    res.json(users);
+  },
+  getUserByID: async (req, res) => {
+    const { id } = req.params;
+
+    const user = await prisma.users.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    res.json(user);
+  },
+  deleteUser: async (req, res) => {
+    const { id } = req.params;
+
+    const user = await prisma.users.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    res.redirect("/admin");
+  },
+  updateUser: async (req, res) => {
+    const { id, firstname, lastname, email, role } = req.body;
+
+    const user = await prisma.users.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        role: role,
+      },
+    });
+
+    res.redirect("/admin");
   }
 };
  
 // henter sider med get
 app.get("/admin/create", pageroutes.create);
+app.get("/admin/edit", pageroutes.edit);
+app.get("/api/getUsers", apiPostRoutes.getUsers);
+app.get("/admin/edit/:id", pageroutes.editByID);
+app.get("/api/getUser/:id", apiPostRoutes.getUserByID);
 
 app.post("/api/addClass", apiPostRoutes.addClass);
+app.post("/api/deleteUser/:id", apiPostRoutes.deleteUser);
+app.post("/api/updateUser", apiPostRoutes.updateUser);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
