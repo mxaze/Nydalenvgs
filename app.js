@@ -9,7 +9,7 @@ const { create } = require("domain");
 app.use(express.json()); 
 app.use(cookieparser());
 app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/login.html");
@@ -76,9 +76,6 @@ app.post("/user/create", async (req, res) => {
 
   return user;
 })
-
-
-
 
 
 async function createAdmin() {
