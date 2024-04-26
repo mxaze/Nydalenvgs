@@ -13,7 +13,10 @@ model Users {
     firstname String
     lastname  String
     email     String
+    username  String
     password  String
+    adress    String
+    phone     String
     role      Role
     classId   Int?
     class     Class?   @relation(fields: [classId], references: [id])
@@ -25,12 +28,15 @@ model Users {
 model Class {
     id     Int     @id @default(autoincrement())
     grade  Grade
+
     people Users[]
 }
 
 enum Role {
     STUDENT
     TEACHER
+    MILJOFAGARBEIDAR
+    ITMEDARBEIDER
     ADMIN
 }
 

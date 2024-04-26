@@ -23,7 +23,7 @@ app.post("/api/login", async (req, res) => {
       password: sha256(password),
     },
   });
-
+  
   if (userData) {
     switch (userData.role === Role.ADMIN) {
       case true:
@@ -58,7 +58,6 @@ app.post("/user/create", async (req, res) => {
   res.redirect("/admin")
 })
 
-// function to create a student
 function sha256(message) {
   return crypto.createHash("sha256").update(message).digest("hex").toString();
 }
@@ -169,3 +168,4 @@ app.post("/api/updateUser", apiPostRoutes.updateUser);
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
+
