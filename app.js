@@ -4,6 +4,7 @@ const app = express();
 const prisma = new PrismaClient();
 const cookieparser = require("cookie-parser");
 const crypto = require("crypto");
+const { create } = require("domain");
 
 app.use(express.json()); 
 app.use(cookieparser());
@@ -55,13 +56,27 @@ app.post("/user/create", async (req, res) => {
           email: email,
           password: sha256(password),
           role: role
-      }
+      },
+   personalinfo: {
+    create: {
+      firstname: "test",
+      lastname: "User",
+      address: "User street",
+      phone: "95003302",
+    },
+  },
+  computer: {
+    create:{
+      age: "user age",
+      computermodel: "User model",
+    },
+    }
   })
 
   res.redirect("/admin")
 })
 
-// function to create a student
+/
 function sha256(message) {
   return crypto.createHash("sha256").update(message).digest("hex").toString();
 }
@@ -80,7 +95,9 @@ async function createAdmin() {
   console.log(`${admin.firstname} has been created`);
 }
 
-// liste for å hente sider, bruk app.get slik som nedenfor for å hente sider
+
+
+
 const pageroutes = {
   admin: (req, res) => {
     res.sendFile(__dirname + "/public/admin.html");
