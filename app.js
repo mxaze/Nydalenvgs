@@ -72,14 +72,11 @@ app.post("/user/create", async (req, res) => {
     },
     }
   })
+  console.log(user.username + " has been created");
 
-  res.redirect("/admin")
+  return user;
 })
 
-/
-function sha256(message) {
-  return crypto.createHash("sha256").update(message).digest("hex").toString();
-}
 
 async function createAdmin() {
   const admin = await prisma.users.create({
@@ -90,8 +87,21 @@ async function createAdmin() {
       password: sha256("Passord01"),
       role: Role.ADMIN,
     },
-  });
-
+   personalinfo: {
+    create: {
+      firstname: "test",
+      lastname: "User",
+      address: "User street",
+      phone: "95003302",
+    },
+  },
+  computer: {
+    create:{
+      age: "user age",
+      computermodel: "User model",
+    },
+    }
+  })
   console.log(`${admin.firstname} has been created`);
 }
 
@@ -174,6 +184,11 @@ const apiPostRoutes = {
     res.redirect("/admin");
   }
 };
+
+
+function sha256(message) {
+  return crypto.createHash("sha256").update(message).digest("hex").toString();
+}
  
 // henter sider med get
 app.get("/admin/create", pageroutes.create);
