@@ -78,6 +78,9 @@ app.post("/user/create", async (req, res) => {
 })
 
 
+
+
+
 async function createAdmin() {
   const admin = await prisma.users.create({
     data: {
@@ -106,8 +109,6 @@ async function createAdmin() {
 }
 
 
-
-
 const pageroutes = {
   admin: (req, res) => {
     res.sendFile(__dirname + "/public/admin.html");
@@ -126,7 +127,7 @@ const pageroutes = {
   }
 };
 
-// liste (objekt) for å kjøre funksjoner, bruk apiPostRoutes slik som nedenfor for å kjøre funksjoner (post)
+// liste (objekt) for å kjøre funksjoner
 const apiPostRoutes = {
   addClass: async (req, res) => {
     const { grade } = req.body;
